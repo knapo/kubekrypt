@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['Krzysztof Knapik']
   spec.email = ['knapo@knapo.net']
 
-  spec.summary = 'KubeKrypt provides seamless encryption and decryption of secrets in YAML files using Google KMS'
+  spec.summary = 'KubeKrypt provides seamless encryption and decryption of Kubernetes Secret menifests using Google Cloud KMS'
   spec.homepage = 'https://github.com/knapo/kubekrypt'
   spec.license = 'MIT'
 

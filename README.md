@@ -2,7 +2,7 @@
 
 # KubeKrypt
 
-A command-line tool for securely encrypting and decrypting Kubernetes Secret manifests using KMS encryption keys.
+A command-line tool for securely encrypting and decrypting Kubernetes Secret manifests using Google Cloud KMS encryption keys.
 
 ## Overview
 
@@ -10,7 +10,7 @@ KubeKrypt provides a simple and secure way to manage sensitive information in Ku
 
 ## Features
 
-- **Secure Encryption**: Uses KMS to encrypt sensitive data in Kubernetes Secret manifests
+- **Secure Encryption**: Uses Google Cloud KMS to encrypt sensitive data in Kubernetes Secret manifests
 - **Simple Interface**: Easy-to-use CLI commands for encryption and decryption
 - **Metadata Tracking**: Embeds metadata in encrypted files for tracking and verification
 - **Stdout Integration**: Outputs to standard out for easy piping and redirection
@@ -57,7 +57,7 @@ kubekrypt version
    - Validates that it's a proper Kubernetes Secret
    - Ensures it's not already encrypted
    - Decodes base64 values to get raw data
-   - Uses KMS to encrypt sensitive data
+   - Uses Google Cloud KMS to encrypt sensitive data
    - Re-encodes with base64 as needed
    - Adds metadata about the encryption
    - Outputs the encrypted YAML
@@ -70,7 +70,7 @@ kubekrypt version
 
 ## Security
 
-KubeKrypt never stores encryption keys locally. All encryption and decryption operations are performed using KMS, ensuring that key material is never exposed.
+KubeKrypt never stores encryption keys locally. All encryption and decryption operations are performed using Google Cloud KMS, ensuring that key material is never exposed.
 
 ## Requirements
 
