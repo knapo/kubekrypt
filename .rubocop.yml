@@ -10,6 +10,9 @@ Gemspec/RequiredRubyVersion:
   Include:
     - 3.4
 
+Layout/LineLength:
+  Max: 140
+
 Metrics/AbcSize:
   Max: 30
 
