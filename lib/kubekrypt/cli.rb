@@ -16,7 +16,8 @@ module KubeKrypt
       yaml_content = File.read(file_path)
       content = YAML.safe_load(yaml_content)
       key_name = options.fetch(KMS_KEY)
-      raise AlreadyEncrytpedError, file_path if content['kubekrypt']
+
+      raise AlreadyEncrytpedError, "#{file_path} is already encrypted" if content['kubekrypt']
 
       result = KubeKrypt::Encryptor.call(content:, key_name:)
       puts result
@@ -28,6 +29,9 @@ module KubeKrypt
       yaml_content = File.read(file_path)
       content = YAML.safe_load(yaml_content)
       base64 = options.fetch(:base64, false)
+
+      raise NotEncrytpedError, "#{file_path} is not encrypted" unless content['kubekrypt']
+
       result = KubeKrypt::Decryptor.call(content:, base64:)
       puts result
     end
