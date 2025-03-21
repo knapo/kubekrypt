@@ -6,6 +6,7 @@ require 'yaml'
 
 module KubeKrypt
   AlreadyEncrytpedError = Class.new(StandardError)
+  NotEncrytpedError = Class.new(StandardError)
   KMS_KEY = :kms_key
   ENCRYPTION_METHOD = 'aes-256-gcm'.freeze
   METADATA_KEY = 'kubekrypt'.freeze
