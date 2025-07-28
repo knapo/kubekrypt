@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'google-cloud-kms'
-  spec.add_dependency 'thor', '~> 1.0'
+  spec.add_dependency 'grpc', '< 1.74.0' # 1.74.0 & google-cloud-kms produce segmentation fault errors
+  spec.add_dependency 'thor', '>= 1.0'
   spec.add_dependency 'yaml'
 end
