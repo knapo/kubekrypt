@@ -1,6 +1,7 @@
 module KubeKrypt
   class CLI < Thor
     include Thor::Shell
+
     def self.exit_on_failure?
       true
     end
