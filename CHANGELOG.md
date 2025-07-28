@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.2] - 2025-07-28
+
+### Added
+- Lock `grpc`, since 1.74.0 is problematic
+
 ## [2.0.1] - 2025-03-21
 
 ### Added

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kubekrypt (2.0.1)
+    kubekrypt (2.0.2)
       google-cloud-kms
       grpc (< 1.74.0)
       thor (>= 1.0)
