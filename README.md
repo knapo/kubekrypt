@@ -1,86 +1,136 @@
 [![Gem Version](https://badge.fury.io/rb/kubekrypt.svg)](https://rubygems.org/gems/kubekrypt)
+[![Ruby CI](https://github.com/knapo/kubekrypt/actions/workflows/ci.yml/badge.svg)](https://github.com/knapo/kubekrypt/actions/workflows/ci.yml)
 
 # KubeKrypt
 
-A command-line tool for securely encrypting and decrypting Kubernetes Secret manifests using Google Cloud KMS encryption keys.
+A command-line tool for encrypting and decrypting Kubernetes Secret manifests using Google Cloud KMS.
 
-## Overview
-
-KubeKrypt provides a simple and secure way to manage sensitive information in Kubernetes Secret manifests. It allows you to encrypt Secret manifests before they're stored in version control systems, and decrypt them when they need to be applied to a cluster.
-
-## Features
-
-- **Secure Encryption**: Uses Google Cloud KMS to encrypt sensitive data in Kubernetes Secret manifests
-- **Simple Interface**: Easy-to-use CLI commands for encryption and decryption
-- **Metadata Tracking**: Embeds metadata in encrypted files for tracking and verification
-- **Stdout Integration**: Outputs to standard out for easy piping and redirection
-- **Base64 Processing**: Automatically handles base64 encoding/decoding under the hood, maintaining compatibility with Kubernetes Secret format
+Secret manifests can be safely committed to version control in their encrypted form and decrypted on demand — either to inspect values or to pipe directly into `kubectl`.
 
 ## Installation
 
-`kubecrypt` uses `google-cloud-kms` and it requires an [environment variable](https://cloud.google.com/ruby/docs/reference/google-cloud-kms/latest/AUTHENTICATION) to be set in order to authenticate and work properly.
-You need one of:
+```bash
+gem install kubekrypt
+```
 
-- `GOOGLE_CLOUD_CREDENTIALS` - Path to JSON file, or JSON contents
-- `GOOGLE_APPLICATION_CREDENTIALS` - Path to JSON file
+Or add it to your `Gemfile`:
+
+```ruby
+gem "kubekrypt"
+```
+
+## Requirements
+
+- Ruby >= 3.4
+- A Google Cloud KMS key with `cloudkms.cryptoKeyVersions.useToEncrypt` / `useToDecrypt` permissions
+
+## Authentication
+
+KubeKrypt delegates authentication to the `google-cloud-kms` gem. Set one of the following environment variables:
+
+| Variable | Description |
+|---|---|
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to a service account JSON key file |
+| `GOOGLE_CLOUD_CREDENTIALS` | Path to JSON file, or JSON contents inline |
+
+Application Default Credentials (e.g. `gcloud auth application-default login`) are also supported.
 
 ## Usage
 
-### Encrypting a Secret
+### Encrypt a Secret
 
 ```bash
-kubekrypt encrypt secret.yaml -k projects/your-project/locations/global/keyRings/your-keyring/cryptoKeys/your-key > secret.enc.yaml
+kubekrypt encrypt secret.yaml \
+  -k projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key \
+  > secret.enc.yaml
 ```
 
-### Decrypting a Secret
+Overwrite the file in place with `--in-place` / `-i`:
+
+```bash
+kubekrypt encrypt -i secret.yaml -k projects/my-project/...
+```
+
+Encrypt every Secret in a directory:
+
+```bash
+kubekrypt encrypt secrets/ -k projects/my-project/...
+```
+
+Each value under `data` is encrypted individually using KMS and prefixed with `enc:`. A `kubekrypt` metadata block is embedded in the output to record the KMS key used and the version:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+data:
+  token: enc:CiQAjMDkZ3...
+kubekrypt:
+  kms_key: projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key
+  version: 2.1.1
+  modified_at: "2026-03-24T10:00:00Z"
+```
+
+### Decrypt a Secret
 
 ```bash
 kubekrypt decrypt secret.enc.yaml > secret.yaml
 ```
 
-### Piping to kubectl
+Or in place:
+
+```bash
+kubekrypt decrypt -i secret.enc.yaml
+```
+
+Decrypt every Secret in a directory:
+
+```bash
+kubekrypt decrypt -i secrets/
+```
+
+The KMS key is read from the embedded `kubekrypt` metadata — no need to specify it again.
+
+### Decrypt and apply directly with kubectl
+
+Kubernetes Secret `data` values must be base64-encoded. Use `--base64` to have KubeKrypt re-encode the decrypted values before output:
 
 ```bash
 kubekrypt decrypt --base64 secret.enc.yaml | kubectl apply -f -
 ```
 
-### Checking Version
+### Check version
 
 ```bash
 kubekrypt version
 ```
 
-## How It Works
+## How it works
 
-1. KubeKrypt reads your Kubernetes Secret YAML file
-2. For encryption, it:
-   - Validates that it's a proper Kubernetes Secret
-   - Ensures it's not already encrypted
-   - Decodes base64 values to get raw data
-   - Uses Google Cloud KMS to encrypt sensitive data
-   - Re-encodes with base64 as needed
-   - Adds metadata about the encryption
-   - Outputs the encrypted YAML
+**Encryption:**
 
-3. For decryption, it:
-   - Verifies the file contains KubeKrypt encryption metadata
-   - Uses the embedded information to decrypt the data
-   - Handles all necessary base64 encoding/decoding
-   - Outputs the original Secret YAML
+1. Reads the YAML file and validates it is not already encrypted.
+2. Calls Google Cloud KMS to encrypt each value in the `data` map.
+3. Stores ciphertext as `enc:<base64>` in place of the original value.
+4. Appends a `kubekrypt` metadata block with the KMS key name, gem version, and timestamp.
+5. Prints the resulting YAML to stdout.
+
+**Decryption:**
+
+1. Reads the `kubekrypt` metadata block to determine which KMS key to use.
+2. Calls Google Cloud KMS to decrypt each `enc:<base64>` value.
+3. Strips the `kubekrypt` metadata block from the output.
+4. Prints the resulting YAML to stdout (optionally with base64-encoded values via `--base64`).
 
 ## Security
 
-KubeKrypt never stores encryption keys locally. All encryption and decryption operations are performed using Google Cloud KMS, ensuring that key material is never exposed.
-
-## Requirements
-
-- Ruby 3.4+
-- Access to a KMS key with appropriate permissions
+KubeKrypt never stores or logs key material. All cryptographic operations are performed by Google Cloud KMS — plaintext values exist only transiently in memory during a command invocation.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Pull requests are welcome. Please make sure `bundle exec rake ci` passes before submitting.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT — see [LICENSE](LICENSE) for details.
