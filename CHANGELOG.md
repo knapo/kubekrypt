@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0] - 2026-03-24
+
+### Changed
+- Migrated from RuboCop to StandardRB
+- Added Ruby 4.0 support
+
 ## [2.0.2] - 2025-07-28
 
 ### Added
