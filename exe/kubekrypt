@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-require 'kubekrypt'
+require "kubekrypt"
 
 KubeKrypt::CLI.start

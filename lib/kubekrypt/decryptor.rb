@@ -8,7 +8,7 @@ module KubeKrypt
     end
 
     def call(encodedtext, base64: false)
-      ciphertext = Base64.strict_decode64(encodedtext.sub("#{ENC_PREFIX}:", ''))
+      ciphertext = Base64.strict_decode64(encodedtext.sub("#{ENC_PREFIX}:", ""))
 
       result = client.decrypt(name: key_name, ciphertext:).plaintext
 
@@ -20,11 +20,11 @@ module KubeKrypt
     end
 
     def self.call(content:, base64:)
-      return content unless content['data']
+      return content unless content["data"]
 
       key_name = content.fetch(METADATA_KEY).fetch(KMS_KEY.to_s)
       decryptor = new(key_name)
-      content['data'].transform_values! { |encodedtext| decryptor.call(encodedtext, base64:) }
+      content["data"].transform_values! { |encodedtext| decryptor.call(encodedtext, base64:) }
       content.delete(METADATA_KEY)
       content.to_yaml
     end

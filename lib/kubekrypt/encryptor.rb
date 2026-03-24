@@ -14,16 +14,16 @@ module KubeKrypt
     end
 
     def self.call(content:, key_name:)
-      return content unless content['data']
+      return content unless content["data"]
 
       encryptor = new(key_name)
 
-      content['data'].transform_values! { |plaintext| encryptor.call(plaintext) }
+      content["data"].transform_values! { |plaintext| encryptor.call(plaintext) }
 
       content[METADATA_KEY] = {
         KMS_KEY.to_s => key_name,
-        'version' => VERSION,
-        'modified_at' => Time.now.utc.iso8601
+        "version" => VERSION,
+        "modified_at" => Time.now.utc.iso8601
       }
 
       content.to_yaml
