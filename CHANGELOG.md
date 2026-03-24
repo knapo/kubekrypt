@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.0] - 2026-03-24
+
+### Added
+- `--in-place` / `-i` flag for `encrypt` and `decrypt` to write output back to the source file
+- Directory support — pass a directory path to process all `*.yaml`/`*.yml` files recursively
+- `kind: Secret` validation — non-Secret manifests are rejected with a clear error
+- YAML parse error handling — invalid YAML prints a clean error instead of a backtrace
+- Dependabot configuration for automated dependency updates
+
 ## [2.1.1] - 2026-03-24
 
 ### Fixed
