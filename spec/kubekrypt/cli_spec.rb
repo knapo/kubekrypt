@@ -23,10 +23,15 @@ RSpec.describe KubeKrypt::CLI do
       expect { cli.encrypt(file_path) }.to output("#{encrypted_yaml}\n").to_stdout
     end
 
-    it "raises AlreadyEncrytpedError if file already has kubekrypt metadata" do
+    it "prints an error and exits if file is already encrypted" do
       already_encrypted = {"apiVersion" => "v1", "kubekrypt" => {"kms_key" => key_name}}.to_yaml
       allow(File).to receive(:read).with(file_path).and_return(already_encrypted)
-      expect { cli.encrypt(file_path) }.to raise_error(KubeKrypt::AlreadyEncrytpedError)
+      expect { cli.encrypt(file_path) }.to output(/already encrypted/).to_stderr.and raise_error(SystemExit)
+    end
+
+    it "prints an error and exits if file is not found" do
+      allow(File).to receive(:read).with(file_path).and_raise(Errno::ENOENT)
+      expect { cli.encrypt(file_path) }.to output(/file not found/).to_stderr.and raise_error(SystemExit)
     end
   end
 
@@ -53,10 +58,15 @@ RSpec.describe KubeKrypt::CLI do
       expect { cli.decrypt(file_path) }.to output("#{decrypted_yaml}\n").to_stdout
     end
 
-    it "raises NotEncrytpedError if file has no kubekrypt metadata" do
+    it "prints an error and exits if file is not encrypted" do
       plain = {"apiVersion" => "v1", "data" => {"token" => "abc"}}.to_yaml
       allow(File).to receive(:read).with(file_path).and_return(plain)
-      expect { cli.decrypt(file_path) }.to raise_error(KubeKrypt::NotEncrytpedError)
+      expect { cli.decrypt(file_path) }.to output(/not encrypted/).to_stderr.and raise_error(SystemExit)
+    end
+
+    it "prints an error and exits if file is not found" do
+      allow(File).to receive(:read).with(file_path).and_raise(Errno::ENOENT)
+      expect { cli.decrypt(file_path) }.to output(/file not found/).to_stderr.and raise_error(SystemExit)
     end
   end
 end
