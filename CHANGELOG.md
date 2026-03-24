@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1] - 2026-03-24
+
+### Fixed
+- Typos in error class names (`AlreadyEncryptedError`, `NotEncryptedError`)
+- CLI now prints clean error messages instead of backtraces on failure
+- Use `METADATA_KEY` constant consistently in CLI
+
 ## [2.1.0] - 2026-03-24
 
 ### Changed
