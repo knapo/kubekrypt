@@ -44,9 +44,7 @@ module KubeKrypt
     end
 
     def load_secret(file_path)
-      content = YAML.safe_load_file(file_path)
-      raise InvalidSecretError, "#{file_path} is not a Kubernetes Secret" unless content["kind"] == "Secret"
-      content
+      YAML.safe_load_file(file_path)
     rescue Psych::Exception => e
       raise InvalidSecretError, "#{file_path} is not valid YAML: #{e.message}"
     end

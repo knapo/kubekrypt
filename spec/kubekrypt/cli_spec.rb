@@ -48,11 +48,6 @@ RSpec.describe KubeKrypt::CLI do
       expect { cli.encrypt(file_path) }.to output(/not valid YAML/).to_stderr.and raise_error(SystemExit)
     end
 
-    it "prints an error and exits if file is not a Secret" do
-      allow(YAML).to receive(:safe_load_file).with(file_path).and_return("apiVersion" => "v1", "kind" => "ConfigMap")
-      expect { cli.encrypt(file_path) }.to output(/not a Kubernetes Secret/).to_stderr.and raise_error(SystemExit)
-    end
-
     context "with a directory" do
       let(:dir) { "/tmp/secrets" }
       let(:file1) { "/tmp/secrets/a.yaml" }
@@ -119,11 +114,6 @@ RSpec.describe KubeKrypt::CLI do
     it "prints an error and exits if YAML is invalid" do
       allow(YAML).to receive(:safe_load_file).with(file_path).and_raise(Psych::Exception, "mapping values are not allowed here")
       expect { cli.decrypt(file_path) }.to output(/not valid YAML/).to_stderr.and raise_error(SystemExit)
-    end
-
-    it "prints an error and exits if file is not a Secret" do
-      allow(YAML).to receive(:safe_load_file).with(file_path).and_return("apiVersion" => "v1", "kind" => "ConfigMap")
-      expect { cli.decrypt(file_path) }.to output(/not a Kubernetes Secret/).to_stderr.and raise_error(SystemExit)
     end
 
     context "with a directory" do

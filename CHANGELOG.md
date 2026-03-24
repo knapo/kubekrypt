@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.1] - 2026-03-24
+
+### Fixed
+- Removed `kind: Secret` validation which broke manifests that omit the `kind` field
+
 ## [2.2.0] - 2026-03-24
 
 ### Added
