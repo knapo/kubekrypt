@@ -196,6 +196,7 @@ DEPENDENCIES
   kubekrypt!
   pry
   rake
+  rdoc
   rspec
   standardrb
 
