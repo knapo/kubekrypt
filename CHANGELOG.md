@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.2] - 2026-03-31
+
+### Changed
+- Removed upper bound version constraint on `grpc` dependency
+
 ## [2.2.1] - 2026-03-24
 
 ### Fixed
