@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- `encrypt` and `decrypt` now raise `InvalidSecretError` when the manifest has no `data` key, instead of silently passing the content through. Previously such a manifest was printed back **unencrypted** in Ruby-inspect format — easy to redirect into an `.enc.yaml` file and commit plaintext secrets without noticing.
+
 ## [2.2.2] - 2026-03-31
 
 ### Changed
