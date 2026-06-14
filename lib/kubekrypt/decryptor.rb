@@ -20,7 +20,9 @@ module KubeKrypt
     end
 
     def self.call(content:, base64:)
-      return content unless content["data"]
+      unless content["data"]
+        raise InvalidSecretError, "no data key found — nothing to decrypt"
+      end
 
       key_name = content.fetch(METADATA_KEY).fetch(KMS_KEY.to_s)
       decryptor = new(key_name)

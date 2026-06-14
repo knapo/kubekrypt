@@ -14,7 +14,10 @@ module KubeKrypt
     end
 
     def self.call(content:, key_name:)
-      return content unless content["data"]
+      unless content["data"]
+        raise InvalidSecretError,
+          "no data key found — refusing to write the manifest through unencrypted"
+      end
 
       encryptor = new(key_name)
 

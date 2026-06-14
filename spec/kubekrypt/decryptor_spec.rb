@@ -41,8 +41,10 @@ RSpec.describe KubeKrypt::Decryptor do
     context "when content has no data key" do
       let(:content) { {"apiVersion" => "v1"} }
 
-      it "returns content unchanged" do
-        expect(described_class.call(content: content, base64: false)).to eq(content)
+      it "raises InvalidSecretError" do
+        expect {
+          described_class.call(content: content, base64: false)
+        }.to raise_error(KubeKrypt::InvalidSecretError, /no data key/)
       end
     end
 
