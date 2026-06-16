@@ -60,7 +60,7 @@ GEM
       google-cloud-errors (~> 1.0)
       grpc-google-iam-v1 (~> 1.11)
     google-logging-utils (0.2.0)
-    google-protobuf (4.35.0)
+    google-protobuf (4.35.1)
       bigdecimal
       rake (~> 13.3)
     googleapis-common-protos (1.7.0)
@@ -77,7 +77,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    grpc (1.81.0)
+    grpc (1.81.1)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc-google-iam-v1 (1.11.0)
